@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb:10.8.2-rc
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MARIABD_ROOT_PASSWORD=root
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_PORT=${MARIADB_PORT}
+  laravelapp:
+    image: docker.io/bitnami/laravel:9
+    ports:
+      - ${LARAVEL_PORT}:8000
+    environment:
+      - DB_HOST=mariadb
+      - DB_PORT=${MARIADB_PORT}
+      - DB_USERNAME=${MARIADB_USER}
+      - DB_DATABASE=${MARIADB_DATABASE}
+      - DB_PASSWORD=${MARIADB_PASSWORD}
+    volumes:
+      - './app:/app'
+    depends_on:
+      - mariadb
