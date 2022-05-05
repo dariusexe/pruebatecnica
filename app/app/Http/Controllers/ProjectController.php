@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Enum\UserRole;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Permissions;
 
 class ProjectController extends Controller
 {
@@ -77,8 +78,12 @@ class ProjectController extends Controller
     public function addParticipant(Request $request, Project $project)
     {
         $project = Project::findOrFail($project->id);
+        $role = request->role_id;
         try {
-            $project->users()->attach($request->user_id, ['role_id' => UserRole::PARTICIPANT]);
+            if($project->users()->where('user_id', $request->user_id)->where('role_id', $role)->exists()) {
+                return response()->json(['error' => 'User already exists in project'], 400);
+            }
+            $project->users()->attach($request->user_id, ['role_id' => $role]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -99,5 +104,5 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($project->id);
         return $project->users;}
-
-}
+    
+    }
