@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Permissions;
 
 class Project extends Model
 {
@@ -17,5 +18,10 @@ class Project extends Model
     public function activities()
     {
         return $this->hasMany(Activity::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'permissions')->using(Permissions::class);
     }
 }

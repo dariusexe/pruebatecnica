@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\Permissions;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -49,5 +50,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return ['roles' => 'admin'];
+    }
+
+    public function project()
+    {
+        return $this->belongsToMany(Project::class, 'permissions')->using(Permissions::class);
     }
 }
