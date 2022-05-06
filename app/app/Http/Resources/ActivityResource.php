@@ -3,8 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\IncidentCollection;
 
-class Activity extends JsonResource
+class ActivityResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,7 +19,7 @@ class Activity extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'incidents' => $this->incidents,
+            'incidents' => IncidentCollection::collection($this->incidents),
         ];
     }
 }

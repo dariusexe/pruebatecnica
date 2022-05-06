@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Enum\UserRole;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Permissions;
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectCollection;
+use App\Http\Resources\UserCollection;
+use App\Models\User;
 
 class ProjectController extends Controller
 {
@@ -18,9 +22,9 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $projects = Project::all();
-        return $projects;
+        return new ProjectCollection($projects);
     }
-   
+
 
     /**
      * Store a newly created resource in storage.
@@ -33,7 +37,7 @@ class ProjectController extends Controller
 
         $project = Project::create($request->all());
         $project->users()->attach($request->user()->id, ['role_id' => UserRole::ADMIN]);
-        return $project;
+        return new ProjectResource($project);
     }
 
     /**
@@ -44,8 +48,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project = Project::findOrFail($project->id);
-        return $project;
+       return new ProjectResource($project);
     }
 
     /**
@@ -59,7 +62,7 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($project->id);
         $project->update($request->all());
-        return $project;
+        return new ProjectResource($project);
     }
 
     /**
@@ -72,37 +75,62 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($project->id);
         $project->delete();
-        return $project;
+        return new ProjectResource($project);
     }
 
+    /**
+     * Add especific user to a Project.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Http\Response
+     */
     public function addParticipant(Request $request, Project $project)
     {
-        $project = Project::findOrFail($project->id);
-        $role = request->role_id;
+
+        $role = $request->role_id;
+        $user = User::findOrFail($request->user_id);
         try {
-            if($project->users()->where('user_id', $request->user_id)->where('role_id', $role)->exists()) {
+            if($project->isParticipantWithRole($user, $role)){
                 return response()->json(['error' => 'User already exists in project'], 400);
             }
-            $project->users()->attach($request->user_id, ['role_id' => $role]);
+            $project->users()->attach($user, ['role_id' => $role]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-        return $project;
+        return response()->json(['success' => 'User added to project'], 201);
     }
 
-    public function removeParticipant(Request $request, Project $project)
+    /**
+     * Remove especific user from Project.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Http\Response
+     */
+    public function removeParticipant(Request $request, Project $project, User $user)
+
     {
         $project = Project::findOrFail($project->id);
         try {
-            $project->users()->detach($request->user_id);
+            $project->users()->detach($user);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-        return $project;
+        return response()->json(['success' => 'User removed from project'], 200);
     }
+
+    /**
+     * Display all users in a Project.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Http\Response
+     */
     public function getParticipants(Project $project)
     {
         $project = Project::findOrFail($project->id);
-        return $project->users;}
-    
+        return new UserCollection($project->users);
+    }
+
     }
