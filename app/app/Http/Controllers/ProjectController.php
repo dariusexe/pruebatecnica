@@ -36,7 +36,7 @@ class ProjectController extends Controller
     {
 
         $project = Project::create($request->all());
-        $project->users()->attach($request->user()->id, ['role_id' => UserRole::ADMIN]);
+        $project->users()->attach($request->user()->id, ['role_id' => UserRole::MANAGER]);
         return new ProjectResource($project);
     }
 
@@ -144,7 +144,7 @@ class ProjectController extends Controller
     public function getManagers(Project $project)
     {
         $project = Project::findOrFail($project->id);
-        $managers = $project->users()->where('role_id', UserRole::ADMIN)->get();
+        $managers = $project->users()->where('role_id', UserRole::MANAGER)->get();
         return new UserCollection($managers);
 
     }

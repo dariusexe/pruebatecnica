@@ -23,7 +23,7 @@ class ProjectResource extends JsonResource
             'description' => $this->description,
             'activities' => ActivityResource::collection($this->activities),
             'participants' => new UserCollection($this->users()->where('role_id', UserRole::PARTICIPANT)->get()),
-            'managers' => new UserCollection($this->users()->where('role_id', UserRole::ADMIN)->get()),
+            'managers' => new UserCollection($this->users()->where('role_id', UserRole::MANAGER)->get()),
         ];
     }
 }
