@@ -17,7 +17,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\ProjectCollection
      */
     public function index(Request $request)
     {
@@ -121,7 +121,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * Display all users in a Project.
+     * Display all Participan users in a Project.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Project  $project
@@ -130,7 +130,22 @@ class ProjectController extends Controller
     public function getParticipants(Project $project)
     {
         $project = Project::findOrFail($project->id);
-        return new UserCollection($project->users);
+        $participants = $project->users()->where('role_id', UserRole::PARTICIPANT)->get();
+        return new UserCollection($participants);
     }
 
+    /**
+     * Display all Manager users in a Project.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Http\Response
+     */
+    public function getManagers(Project $project)
+    {
+        $project = Project::findOrFail($project->id);
+        $managers = $project->users()->where('role_id', UserRole::ADMIN)->get();
+        return new UserCollection($managers);
+
     }
+}

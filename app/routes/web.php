@@ -20,14 +20,24 @@ use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return view('welcome');
 });
-
+//User routes
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate']);
 Route::get('users/delete/{id}', [UserController::class, 'delete']);
-
+//Project routes
 Route::resource('projects', ProjectController::class)->middleware('jwt.verify');
-Route::post('projects/{project}/users', [ProjectController::class, 'addParticipant'])->middleware('jwt.verify');
-Route::get('projects/{project}/users', [ProjectController::class, 'getParticipants'])->middleware('jwt.verify');
-Route::delete('projects/{project}/users/{user}', [ProjectController::class, 'removeParticipant'])->middleware('jwt.verify');
-Route::resource('activities', ActivityController::class);
-Route::resource('incidents', IncidentController::class);
+Route::controller(ProjectController::class)->group(function (){
+
+    Route::post('projects/{project}/users', 'addParticipant');
+    Route::get('projects/{project}/users', 'getParticipants');
+    Route::get('projects/{project}/managers', 'getManagers');
+    Route::delete('projects/{project}/users/{user}', 'removeParticipant');
+});
+
+
+//Activity routes
+Route::resource('project/{project}/activities', ActivityController::class);
+
+
+//Incident routes
+Route::resource('project/{project}/activity/{activity}/incidents', IncidentController::class);

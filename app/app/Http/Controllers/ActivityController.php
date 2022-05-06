@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Http\Resources\ActivityResource;
 
 class ActivityController extends Controller
 {
@@ -13,9 +14,9 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, Project $project)
     {
-        return Activity::all();
+        return ActivityResource::collection($project->activities);
 
     }
 
@@ -28,7 +29,7 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         $activity = Project::find($request->project_id)->activities()->create($request->all());
-        return $activity;
+        return new ActivityResource($activity);
     }
 
     /**
@@ -40,7 +41,7 @@ class ActivityController extends Controller
     public function show(Activity $activity)
     {
         $activity = Activity::find($activity->id);
-        return $activity;
+        return new ActivityResource($activity);
     }
 
     /**
@@ -54,7 +55,7 @@ class ActivityController extends Controller
     {
         $activity = Activity::find($activity->id);
         $activity->update($request->all());
-        return $activity;
+        return new ActivityResource($activity);
     }
 
     /**
@@ -67,6 +68,6 @@ class ActivityController extends Controller
     {
         $activity = Activity::find($activity->id);
         $activity->delete();
-        return $activity;
+        return new ActivityResource($activity);
     }
 }
