@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ActivityResource;
+use App\Http\Resources\ActivityCollection;
 
 class ActivityController extends Controller
 {
@@ -16,7 +17,7 @@ class ActivityController extends Controller
      */
     public function index(Request $request, Project $project)
     {
-        return ActivityResource::collection($project->activities);
+        return new ActivityCollection($project->activities);
 
     }
 
@@ -69,5 +70,11 @@ class ActivityController extends Controller
         $activity = Activity::find($activity->id);
         $activity->delete();
         return new ActivityResource($activity);
+    }
+
+
+    public function addParticipant(Request $request, Activity $activity, Project $project){
+        $activity = Activity::find($activity->id);
+        $activity->participants()->attach($request->user_id);
     }
 }

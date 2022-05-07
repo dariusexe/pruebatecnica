@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\ActivityResource;
-use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
 use App\Enum\UserRole;
 
 class ProjectResource extends JsonResource
@@ -22,8 +22,8 @@ class ProjectResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'activities' => ActivityResource::collection($this->activities),
-            'participants' => new UserCollection($this->users()->where('role_id', UserRole::PARTICIPANT)->get()),
-            'managers' => new UserCollection($this->users()->where('role_id', UserRole::MANAGER)->get()),
+            'participants' => UserResource::collection($this->users()->where('role_id', UserRole::PARTICIPANT)->get()),
+            'managers' => UserResource::collection($this->users()->where('role_id', UserRole::MANAGER)->get()),
         ];
     }
 }

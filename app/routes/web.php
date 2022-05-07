@@ -22,10 +22,14 @@ Route::get('/', function () {
 });
 //User routes
 Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'authenticate']);
+Route::post('login', [UserController::class, 'authenticate'])->name('login');
 Route::get('users/delete/{id}', [UserController::class, 'delete']);
+
+Route::get('users', [UserController::class, 'show'])->middleware('auth');
+
+
 //Project routes
-Route::resource('projects', ProjectController::class)->middleware('jwt.verify');
+Route::resource('projects', ProjectController::class)->middleware('auth');
 Route::controller(ProjectController::class)->group(function (){
 
     Route::post('projects/{project}/users', 'addParticipant');
