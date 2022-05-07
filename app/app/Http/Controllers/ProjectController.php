@@ -21,8 +21,8 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $projects = Project::all();
-        return new ProjectCollection($projects);
+
+        return new ProjectCollection(Auth::user()->project);
     }
 
 
@@ -48,6 +48,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $this->authorize('show', $project);
        return new ProjectResource($project);
     }
 

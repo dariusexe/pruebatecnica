@@ -18,4 +18,17 @@ class Activity extends Model
     {
         return $this->hasMany(Incident::class);
     }
+
+    public function isParticipant($user)
+    {
+        return $this->users()->where('user_id', $user->id)->exists();
+    }
+    public function isParticipantWithRole($user, $role)
+    {
+        return $this->users()->where('user_id', $user->id)->where('role_id', $role)->exists();
+    }
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'users-activities');
+    }
 }

@@ -40,7 +40,7 @@ Route::controller(ProjectController::class)->group(function (){
 
 
 //Activity routes
-Route::resource('project/{project}/activities', ActivityController::class);
+Route::resource('project/{project}/activities', ActivityController::class)->middleware('auth');
 
 
 //Incident routes

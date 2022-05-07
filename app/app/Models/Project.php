@@ -33,5 +33,8 @@ class Project extends Model
     {
         return $this->users()->where('user_id', $user->id)->where('role_id', $role)->exists();
     }
+    public function activitiesFromUser($user){
+        return $user->ActivityFromProject($this);
+    }
 
 }

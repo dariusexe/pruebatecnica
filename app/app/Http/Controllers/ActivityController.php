@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\UserRole;
+use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ActivityResource;
-use App\Http\Resources\ActivityCollection;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityController extends Controller
 {
@@ -17,7 +19,7 @@ class ActivityController extends Controller
      */
     public function index(Request $request, Project $project)
     {
-        return new ActivityCollection($project->activities);
+        return new ActivityCollection(Auth::user()->activityFromProject($project));
 
     }
 
@@ -27,9 +29,11 @@ class ActivityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Project $project)
     {
-        $activity = Project::find($request->project_id)->activities()->create($request->all());
+        var_dump("hola");
+        $activity = $project->activities()->create($request->all());
+        $activity->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
         return new ActivityResource($activity);
     }
 
@@ -39,8 +43,9 @@ class ActivityController extends Controller
      * @param  \App\Models\Activity  $activity
      * @return \Illuminate\Http\Response
      */
-    public function show(Activity $activity)
+    public function show(Project $project, Activity $activity)
     {
+        $this->authorize('show', $activity);
         $activity = Activity::find($activity->id);
         return new ActivityResource($activity);
     }

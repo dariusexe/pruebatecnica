@@ -60,4 +60,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Activity::class, 'users-activities');
     }
+    public function activityFromProject($project){
+        return $this->activities()->where('project_id', $project->id)->get();
+    }
+
 }
