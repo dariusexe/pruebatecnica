@@ -25,9 +25,11 @@ class IncidentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Project $project)
     {
+        $this->authorize('create', $project);
         $incident = Activity::find($request->activity_id)->incidents()->create($request->all());
+        return $incident;
     }
 
     /**
