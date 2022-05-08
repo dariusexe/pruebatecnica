@@ -13,35 +13,36 @@ use Illuminate\Support\Facades\Auth;
 class ActivityController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all activities from user
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Project $project
+     * @return \App\Http\Resources\ActivityCollection
      */
     public function index(Request $request, Project $project)
     {
         return new ActivityCollection(Auth::user()->activityFromProject($project));
-
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Activity attached to a user with role Manager.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Project       $project
+     * @return \App\Http\Resources\ActivityResource
      */
     public function store(Request $request, Project $project)
     {
-        var_dump("hola");
         $activity = $project->activities()->create($request->all());
         $activity->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
         return new ActivityResource($activity);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Activity.
      *
      * @param  \App\Models\Activity  $activity
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ActivityResource
      */
     public function show(Project $project, Activity $activity)
     {
@@ -51,11 +52,11 @@ class ActivityController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified Activity in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Activity  $activity
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ActivityResource
      */
     public function update(Request $request, Activity $activity)
     {
@@ -65,10 +66,10 @@ class ActivityController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified Activity from storage.
      *
      * @param  \App\Models\Activity  $activity
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ActivityResource
      */
     public function destroy(Activity $activity)
     {
@@ -77,9 +78,17 @@ class ActivityController extends Controller
         return new ActivityResource($activity);
     }
 
-
-    public function addParticipant(Request $request, Activity $activity, Project $project){
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @param Activity $activity
+     * @return \Illuminate\Http\Response
+     */
+    public function addParticipant(Request $request, Activity $activity)
+    {
         $activity = Activity::find($activity->id);
         $activity->participants()->attach($request->user_id);
+        return response()->json(['success' => 'User added to a Activity'], 200);
     }
 }

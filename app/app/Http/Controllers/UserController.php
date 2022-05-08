@@ -18,7 +18,7 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
 
         try {
-            if (! $token = auth()->attempt($credentials)) {
+            if (!$token = auth()->attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 400);
             }
         } catch (JWTException $e) {
@@ -26,7 +26,6 @@ class UserController extends Controller
         }
 
         return response()->json(compact('token'));
-
     }
 
     public function register(Request $request)
@@ -48,7 +47,7 @@ class UserController extends Controller
         ]);
 
 
-        return response()->json(compact('user'),201);
+        return response()->json(compact('user'), 201);
     }
 
 
@@ -59,7 +58,8 @@ class UserController extends Controller
         return response()->json(compact('user'));
     }
 
-    public function show(){
+    public function show()
+    {
         return new UserCollection(User::all());
     }
 }
