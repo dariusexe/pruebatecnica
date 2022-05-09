@@ -21,7 +21,26 @@ class ProjectPolicy
         //
     }
 
-    public function show(User $user, Project $project){
+    public function show(User $user, Project $project)
+    {
         return $project->isParticipant($user);
+    }
+    public function create_activity(User $user, Project $project)
+    {
+        return $project->isParticipant($user);
+    }
+
+    public function delete(User $user, Project $project)
+    {
+        return $project->isParticipantWithRole($user, UserRole::MANAGER);
+    }
+    public function update(User $user, Project $project)
+    {
+        return $project->isParticipantWithRole($user, UserRole::MANAGER);
+    }
+
+    public function edit_participant(User $user, Project $project)
+    {
+        return $project->isParticipantWithRole($user, UserRole::MANAGER);
     }
 }

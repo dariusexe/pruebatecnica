@@ -28,15 +28,15 @@ class ActivityController extends Controller
      * Store a newly created Activity attached to a user with role Manager.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project       $project
+     * @param  \App\Models\Project  S     $project
      * @return \App\Http\Resources\ActivityResource
      */
     public function store(Request $request, Project $project)
     {
-
-        $this->authorize('create', $project);
+        $this->authorize('create_activity', $project);
         $activity = $project->activities()->create($request->all());
         $activity->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
+        
         return new ActivityResource($activity);
     }
 
@@ -62,6 +62,7 @@ class ActivityController extends Controller
      */
     public function update(Request $request, Activity $activity)
     {
+        $this->authorize('update', $activity);
         $activity = Activity::find($activity->id);
         $activity->update($request->all());
         return new ActivityResource($activity);

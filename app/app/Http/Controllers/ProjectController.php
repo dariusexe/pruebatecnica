@@ -34,9 +34,8 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-
         $project = Project::create($request->all());
-        $project->users()->attach($request->user()->id, ['role_id' => UserRole::MANAGER]);
+        $project->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
         return new ProjectResource($project);
     }
 
@@ -61,6 +60,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        $this->authorize('update', $project);
         $project = Project::findOrFail($project->id);
         $project->update($request->all());
         return new ProjectResource($project);
@@ -74,6 +74,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        $this->authorize('delete', $project);
         $project = Project::findOrFail($project->id);
         $project->delete();
         return new ProjectResource($project);
@@ -88,12 +89,13 @@ class ProjectController extends Controller
      */
     public function addParticipant(Request $request, Project $project)
     {
+        $this->authorize('edit_participant', $project);
 
         $role = $request->role_id;
         $user = User::findOrFail($request->user_id);
         try {
             if($project->isParticipantWithRole($user, $role)){
-                return response()->json(['error' => 'User already exists in project'], 400);
+                return response()->json(['error' => 'User already exists in project with this role'], 400);
             }
             $project->users()->attach($user, ['role_id' => $role]);
         } catch (\Exception $e) {
@@ -112,6 +114,7 @@ class ProjectController extends Controller
     public function removeParticipant(Request $request, Project $project, User $user)
 
     {
+        $this->authorize('edit_participant', $project);
         $project = Project::findOrFail($project->id);
         try {
             $project->users()->detach($user);

@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\IncidentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,7 +31,7 @@ Route::get('users', [UserController::class, 'show'])->middleware('api:auth');
 
 
 //Project routes
-Route::resource('projects', ProjectController::class)->middleware('api:auth');
+Route::resource('projects', ProjectController::class)->middleware('auth');
 Route::controller(ProjectController::class)->group(function (){
 
     Route::post('projects/{project}/users', 'addParticipant');
@@ -40,7 +42,7 @@ Route::controller(ProjectController::class)->group(function (){
 
 
 //Activity routes
-Route::resource('project/{project}/activities', ActivityController::class)->middleware('api:auth');
+Route::resource('project/{project}/activities', ActivityController::class)->middleware('auth');
 
 
 //Incident routes

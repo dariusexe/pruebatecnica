@@ -6,6 +6,7 @@ use App\Models\Incident;
 use App\Models\Project;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class IncidentController extends Controller
 {
@@ -14,9 +15,10 @@ class IncidentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Activity $activity)
     {
-        return Incident::all();
+        $this->authorize('showAll', $activity);
+        return $activity->incidents;
     }
 
     /**

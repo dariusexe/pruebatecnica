@@ -23,20 +23,3 @@ Route::get('/', function () {
 
 
 
-//Project routes
-Route::resource('projects', ProjectController::class)->middleware('auth');
-Route::controller(ProjectController::class)->group(function (){
-
-    Route::post('projects/{project}/users', 'addParticipant');
-    Route::get('projects/{project}/users', 'getParticipants');
-    Route::get('projects/{project}/managers', 'getManagers');
-    Route::delete('projects/{project}/users/{user}', 'removeParticipant');
-});
-
-
-//Activity routes
-Route::resource('project/{project}/activities', ActivityController::class)->middleware('auth');
-
-
-//Incident routes
-Route::resource('project/{project}/activity/{activity}/incidents', IncidentController::class);

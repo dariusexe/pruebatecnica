@@ -2,14 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Activity;
-use App\Models\Project;
 use App\Models\User;
-use App\Enum\UserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Support\Facades\Log;
+use App\Models\Activity;
 
-class ActivityPolicy
+class IncidentPolicy
 {
     use HandlesAuthorization;
 
@@ -22,10 +19,13 @@ class ActivityPolicy
     {
         //
     }
-    public function show(User $user, Activity $activity){
-        return $activity->isParticipant($user);
+    public function showAll(User $user, Activity $activity){
+        return $activity->isManager($user);
     }
-    public function update(User $user, Project $project){
-        return $project->isParticipantWithRole($user, UserRole::MANAGER);
+    public function show(User $user, Activity $activity){
+        return $activity->isManager($user);
+    }
+    public function create(User $user, Activity $activity){
+        return $activity->isManager($user);
     }
 }
