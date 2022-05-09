@@ -20,12 +20,7 @@ use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return view('welcome');
 });
-//User routes
-Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'authenticate'])->name('login');
-Route::get('users/delete/{id}', [UserController::class, 'delete']);
 
-Route::get('users', [UserController::class, 'show'])->middleware('auth');
 
 
 //Project routes

@@ -33,6 +33,8 @@ class ActivityController extends Controller
      */
     public function store(Request $request, Project $project)
     {
+
+        $this->authorize('create', $project);
         $activity = $project->activities()->create($request->all());
         $activity->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
         return new ActivityResource($activity);

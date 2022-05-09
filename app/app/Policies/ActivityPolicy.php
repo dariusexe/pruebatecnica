@@ -23,4 +23,7 @@ class ActivityPolicy
     public function show(User $user, Activity $activity){
         return $activity->isParticipant($user);
     }
+    public function create(User $user, Project $project){
+        return $project->isParticipant($user);
+    }
 }
