@@ -22,10 +22,7 @@ class ProjectTest extends TestCase
      */
     public function test_show_only_project_with_user_participant()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
 
         $project->users()->attach($this->user, ['role_id' => UserRole::MANAGER]);
 
@@ -53,10 +50,8 @@ class ProjectTest extends TestCase
     }
     public function test_cannot_show_project_without_permission()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
+
         $project->users()->attach($this->user, ['role_id' => UserRole::MANAGER]);
 
         $response = $this->get('api/projects/' . $project->id, $this->headers);
@@ -89,10 +84,7 @@ class ProjectTest extends TestCase
 
     public function test_delete_correct_project()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
 
         $project->users()->attach($this->loggedInUser, ['role_id' => UserRole::MANAGER]);
 
@@ -100,28 +92,25 @@ class ProjectTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
-            'name' => 'Project 1'
+            'name' => $project->name,
+            'description' => $project->description
         ]);
     }
 
     public function test_cannot_delete_project_without_permission()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
+
         $project->users()->attach($this->user, ['role_id' => UserRole::MANAGER]);
 
         $response = $this->delete('api/projects/' . $project->id, $this->headers);
+
         $response->assertStatus(403);
     }
 
     public function test_user_can_participate_and_manage()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
         $project->users()->attach($this->loggedInUser, ['role_id' => UserRole::MANAGER]);
         $project->users()->attach($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]);
         $response = $this->getJson('api/projects/' . $project->id, $this->headers);
@@ -132,10 +121,7 @@ class ProjectTest extends TestCase
 
     public function test_user_cannot_be_added_with_same_role()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
         $project->users()->attach($this->loggedInUser, ['role_id' => UserRole::MANAGER]);
         $data = [
             'user_id' => $this->loggedInUser->id,
@@ -154,10 +140,7 @@ class ProjectTest extends TestCase
 
     public function test_only_manager_can_edit_participants()
     {
-        $project = Project::create([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $project = Project::factory()->create();
         $project->users()->attach($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]);
         $data = [
             'user_id' => $this->user->id,

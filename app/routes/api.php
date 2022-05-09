@@ -17,22 +17,19 @@ use App\Http\Controllers\IncidentController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 //User routes
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate'])->name('login');
 Route::get('users/delete/{id}', [UserController::class, 'delete']);
 
-Route::get('users', [UserController::class, 'show'])->middleware('api:auth');
+Route::get('users', [UserController::class, 'show'])->middleware('auth');
 
 
 
 //Project routes
 Route::resource('projects', ProjectController::class)->middleware('auth');
-Route::controller(ProjectController::class)->group(function (){
+Route::controller(ProjectController::class)->middleware('auth')->group(function (){
 
     Route::post('projects/{project}/users', 'addParticipant');
     Route::get('projects/{project}/users', 'getParticipants');

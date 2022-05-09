@@ -15,6 +15,14 @@ class UserController extends Controller
 
     public function authenticate(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
         $credentials = $request->only('email', 'password');
 
         try {
