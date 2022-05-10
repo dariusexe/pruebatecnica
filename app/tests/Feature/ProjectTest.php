@@ -43,10 +43,7 @@ class ProjectTest extends TestCase
         $response = $this->postJson('api/projects', $data, $this->headers);
 
         $response->assertStatus(201);
-        $response->assertJsonFragment([
-            'name' => 'Project 1',
-            'description' => 'Project 1 description',
-        ]);
+        $response->assertJsonFragment($data);
     }
     public function test_cannot_show_project_without_permission()
     {

@@ -8,6 +8,7 @@ use App\Models\Activity;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ActivityResource;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ActivityController extends Controller
@@ -36,7 +37,7 @@ class ActivityController extends Controller
         $this->authorize('create_activity', $project);
         $activity = $project->activities()->create($request->all());
         $activity->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
-        
+
         return new ActivityResource($activity);
     }
 
@@ -49,7 +50,6 @@ class ActivityController extends Controller
     public function show(Project $project, Activity $activity)
     {
         $this->authorize('show', $activity);
-        $activity = Activity::find($activity->id);
         return new ActivityResource($activity);
     }
 
@@ -63,7 +63,6 @@ class ActivityController extends Controller
     public function update(Request $request, Activity $activity)
     {
         $this->authorize('update', $activity);
-        $activity = Activity::find($activity->id);
         $activity->update($request->all());
         return new ActivityResource($activity);
     }
@@ -76,7 +75,6 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
-        $activity = Activity::find($activity->id);
         $activity->delete();
         return new ActivityResource($activity);
     }
@@ -88,10 +86,13 @@ class ActivityController extends Controller
      * @param Activity $activity
      * @return \Illuminate\Http\Response
      */
-    public function addParticipant(Request $request, Activity $activity)
+    public function addParticipant(Request $request, Project $project, Activity $activity)
     {
-        $activity = Activity::find($activity->id);
-        $activity->participants()->attach($request->user_id);
-        return response()->json(['success' => 'User added to a Activity'], 200);
+        $user = User::findOrFail($request->user_id);
+        if($activity->isParticipant($user)){
+            return response()->json(['error' => 'User already has been added'], 400);
+        }
+        $activity->users()->attach($user->id, ['role_id' => $request->role_id]);
+        return response()->json(['success' => 'User added to a Activity'], 201);
     }
 }

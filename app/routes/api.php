@@ -39,8 +39,15 @@ Route::controller(ProjectController::class)->middleware('auth')->group(function 
 
 
 //Activity routes
-Route::resource('project/{project}/activities', ActivityController::class)->middleware('auth');
+Route::resource('project/{project}/activities', ActivityController::class)->middleware('auth')->scoped();
+Route::controller(ActivityController::class)->middleware('auth')->group(function (){
+
+    Route::post('projects/{project}/activities/{activity}/users', 'addParticipant');
+    Route::get('projects/{project}/activities/{activity}/users', 'getParticipants');
+    Route::get('projects/{project}/activities/{activity}/managers', 'getManagers');
+    Route::delete('projects/{project}/activities/{activity}/users/{user}', 'removeParticipant');
+});
 
 
 //Incident routes
-Route::resource('project/{project}/activity/{activity}/incidents', IncidentController::class);
+Route::resource('project/{project}/activity/{activity}/incidents', IncidentController::class)->middleware('auth')->scoped();
