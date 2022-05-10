@@ -25,7 +25,26 @@ class ActivityPolicy
     public function show(User $user, Activity $activity){
         return $activity->isParticipant($user);
     }
-    public function update(User $user, Project $project){
-        return $project->isParticipantWithRole($user, UserRole::MANAGER);
+
+    public function show_incident(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+
     }
+    public function create_incident(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+
+    }
+    public function edit_incident(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+
+    }
+    public function delete_incident(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+
+    }
+    public function update_incident(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+
+    }
+    
 }

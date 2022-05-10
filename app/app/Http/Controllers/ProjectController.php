@@ -133,7 +133,6 @@ class ProjectController extends Controller
      */
     public function getParticipants(Project $project)
     {
-        $project = Project::findOrFail($project->id);
         $participants = $project->users()->where('role_id', UserRole::PARTICIPANT)->get();
         return new UserCollection($participants);
     }
@@ -147,7 +146,6 @@ class ProjectController extends Controller
      */
     public function getManagers(Project $project)
     {
-        $project = Project::findOrFail($project->id);
         $managers = $project->users()->where('role_id', UserRole::MANAGER)->get();
         return new UserCollection($managers);
 

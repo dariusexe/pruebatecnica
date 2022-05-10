@@ -22,9 +22,8 @@ class ProjectTest extends TestCase
      */
     public function test_show_only_project_with_user_participant()
     {
-        $project = Project::factory()->create();
 
-        $project->users()->attach($this->user, ['role_id' => UserRole::MANAGER]);
+        $this->project->users()->attach($this->user, ['role_id' => UserRole::MANAGER]);
 
         $response = $this->get('api/projects', $this->headers);
 
@@ -45,7 +44,7 @@ class ProjectTest extends TestCase
         $response->assertStatus(201);
         $response->assertJsonFragment($data);
     }
-    public function test_cannot_show_project_without_permission()
+    public function test_cannot_show_project_without_being_participant()
     {
         $project = Project::factory()->create();
 
@@ -149,4 +148,6 @@ class ProjectTest extends TestCase
         $response = $this->postJson('api/projects/' . $project->id . '/users', $data,  $this->headers);
         $response->assertStatus(201);
     }
+
+    
 }

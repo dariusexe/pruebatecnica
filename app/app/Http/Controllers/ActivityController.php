@@ -8,6 +8,8 @@ use App\Models\Activity;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ActivityResource;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,6 +81,11 @@ class ActivityController extends Controller
         return new ActivityResource($activity);
     }
 
+    public function getParticipants(Request $request, Project $project, Activity $activity)
+    {
+        $this->authorize('show', $activity);
+        return new UserCollection($activity->users);
+    }
     /**
      * Undocumented function
      *
@@ -89,10 +96,27 @@ class ActivityController extends Controller
     public function addParticipant(Request $request, Project $project, Activity $activity)
     {
         $user = User::findOrFail($request->user_id);
-        if($activity->isParticipant($user)){
+        if ($activity->isParticipant($user)) {
             return response()->json(['error' => 'User already has been added'], 400);
         }
         $activity->users()->attach($user->id, ['role_id' => $request->role_id]);
         return response()->json(['success' => 'User added to a Activity'], 201);
+    }
+
+    public function removeParticipant(Request $request, Project $project, Activity $activity, User $user)
+    {
+        if (!$activity->isParticipant($user)) {
+            return response()->json(['error' => 'User not found in Activity'], 400);
+        }
+        $activity->users()->detach($user->id);
+        return response()->json(['success' => 'User removed from a Activity'], 200);
+    }
+
+    public function changeParticipantRole(Request $request, Project $project, Activity $activity, User $user){
+        if (!$activity->isParticipant($user)) {
+            return response()->json(['error' => 'User not found in Activity'], 400);
+        }
+        $activity->users()->updateExistingPivot($user->id, ['role_id' => $request->role_id]);
+        return response()->json(['success' => 'User role changed in a Activity'], 200);
     }
 }

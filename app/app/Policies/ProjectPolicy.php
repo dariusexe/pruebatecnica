@@ -27,7 +27,7 @@ class ProjectPolicy
     }
     public function create_activity(User $user, Project $project)
     {
-        return $project->isParticipant($user);
+        return $project->isParticipantWithRole($user, UserRole::MANAGER);
     }
 
     public function delete(User $user, Project $project)
@@ -43,4 +43,5 @@ class ProjectPolicy
     {
         return $project->isParticipantWithRole($user, UserRole::MANAGER);
     }
+
 }

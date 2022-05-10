@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\UserRole;
 use App\Models\Incident;
 use App\Models\Project;
 use App\Models\Activity;
@@ -15,9 +16,9 @@ class IncidentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Activity $activity)
+    public function index(Project $project, Activity $activity)
     {
-        $this->authorize('showAll', $activity);
+        $this->authorize('show_incident', $activity);
         return $activity->incidents;
     }
 
@@ -27,10 +28,10 @@ class IncidentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Project $project)
+    public function store(Request $request, Project $project, Activity $activity)
     {
-        $this->authorize('create', $project);
-        $incident = Activity::find($request->activity_id)->incidents()->create($request->all());
+        $this->authorize('create_incident', $activity);
+        $incident = $activity->incidents()->create($request->all());
         return $incident;
     }
 
@@ -40,9 +41,10 @@ class IncidentController extends Controller
      * @param  \App\Models\Incident  $incident
      * @return \Illuminate\Http\Response
      */
-    public function show(Incident $incident)
+    public function show(Request $request, Project $project, Activity $activity, Incident $incident)
     {
-        $incident = Incident::find($incident->id);
+
+        $this->authorize('show_incident', $activity);
         return $incident;
     }
 
@@ -53,9 +55,9 @@ class IncidentController extends Controller
      * @param  \App\Models\Incident  $incident
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Incident $incident)
+    public function update(Request $request, Project $project, Activity $activity,  Incident $incident)
     {
-        $incident = Incident::find($incident->id);
+        $this->authorize('update_incident', $activity);
         $incident->update($request->all());
         return $incident;
     }
@@ -66,10 +68,17 @@ class IncidentController extends Controller
      * @param  \App\Models\Incident  $incident
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Incident $incident)
+    public function destroy(Project $project, Activity $activity, Incident $incident)
     {
-        $incident = Incident::find($incident->id);
+        $this->authorize('delete_incident', $incident);
         $incident->delete();
+        return $incident;
+    }
+
+    public function addParticipant(Request $request, Project $project, Activity $activity, Incident $incident)
+    {
+        $this->authorize('add_participant', $activity);
+        $incident->users()->attach($request->user_id);
         return $incident;
     }
 }
