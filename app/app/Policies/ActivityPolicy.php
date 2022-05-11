@@ -27,6 +27,7 @@ class ActivityPolicy
     }
 
     public function show_incident(User $user, Activity $activity){
+
         return $activity->isParticipantWithRole($user, UserRole::MANAGER);
 
     }
@@ -39,6 +40,7 @@ class ActivityPolicy
 
     }
     public function delete_incident(User $user, Activity $activity){
+        var_dump($activity->isParticipantWithRole($user, UserRole::MANAGER));
         return $activity->isParticipantWithRole($user, UserRole::MANAGER);
 
     }
@@ -46,5 +48,5 @@ class ActivityPolicy
         return $activity->isParticipantWithRole($user, UserRole::MANAGER);
 
     }
-    
+
 }

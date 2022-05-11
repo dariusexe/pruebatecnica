@@ -34,7 +34,7 @@ class IncidentTest extends TestCase
     }
     public function test_only_manager_of_activity_can_create_incident()
     {
-        
+
         $data = [
             'name' => 'test incident'
         ];
@@ -64,14 +64,15 @@ class IncidentTest extends TestCase
         $response->assertStatus(403);}
 
     public function test_only_manager_of_activity_can_delete_incident(){
-        $project = Project::factory()->hasAttached($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT])->has(Activity::factory()->has(Incident::factory())->hasAttached($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]))->create();
+        $project = Project::factory()->hasAttached($this->loggedInUser, ['role_id' => UserRole::MANAGER])->has(Activity::factory()->has(Incident::factory())->hasAttached($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]))->create();
         $activity = $project->activities()->first();
         $incident = $activity->incidents()->first();
+
         $response = $this->deleteJson('api/projects/' . $project->id . '/activities/' . $activity->id . '/incidents/' . $incident->id);
         $response->assertStatus(403);
-        $activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => UserRole::MANAGER]);
+        $activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => 1]);
         $response = $this->deleteJson('api/projects/' . $project->id . '/activities/' . $activity->id . '/incidents/' . $incident->id);
         $response->assertStatus(200);
-        
+
     }
 }

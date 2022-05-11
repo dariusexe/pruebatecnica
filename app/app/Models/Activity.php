@@ -29,6 +29,6 @@ class Activity extends Model
     }
     public function users()
     {
-        return $this->belongsToMany(User::class, 'users-activities');
+        return $this->belongsToMany(User::class, 'users-activities')->withPivot('role_id');
     }
 }
