@@ -25,7 +25,7 @@ class Activity extends Model
     }
     public function isParticipantWithRole($user, $role)
     {
-        return $this->users()->where('user_id', $user->id)->where('role_id', $role)->exists();
+        return $this->users()->where('user_id', $user->id)->wherePivot('role_id', $role)->exists();
     }
     public function users()
     {

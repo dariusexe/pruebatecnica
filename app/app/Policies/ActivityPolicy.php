@@ -40,7 +40,6 @@ class ActivityPolicy
 
     }
     public function delete_incident(User $user, Activity $activity){
-        var_dump($activity->isParticipantWithRole($user, UserRole::MANAGER));
         return $activity->isParticipantWithRole($user, UserRole::MANAGER);
 
     }

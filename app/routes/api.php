@@ -24,6 +24,9 @@ Route::post('login', [UserController::class, 'authenticate'])->name('login');
 Route::get('users/delete/{id}', [UserController::class, 'delete']);
 
 Route::get('users', [UserController::class, 'show'])->middleware('auth');
+Route::get('users/{user}/projects', [UserController::class, 'showProjects'])->middleware('auth');
+Route::get('users/{user}/activities', [UserController::class, 'showActivities'])->middleware('auth');
+Route::get('users/{user}/incidents', [UserController::class, 'showIncidents'])->middleware('auth');
 
 
 

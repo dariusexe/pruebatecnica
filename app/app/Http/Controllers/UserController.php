@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ActivityCollection;
+use App\Http\Resources\IncidentCollection;
+use App\Http\Resources\ProjectCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -69,5 +72,15 @@ class UserController extends Controller
     public function show()
     {
         return new UserCollection(User::all());
+    }
+
+    public function showProjects(User $user){
+        return new ProjectCollection($user->projects);
+    }
+    public function showActivities(User $user){
+        return new ActivityCollection($user->activities);
+    }
+    public function showIncidents(User $user){
+        return new IncidentCollection($user->incidents);
     }
 }
