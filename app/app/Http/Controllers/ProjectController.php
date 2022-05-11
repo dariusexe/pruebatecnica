@@ -22,7 +22,7 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
 
-        return new ProjectCollection(Auth::user()->project);
+        return new ProjectCollection(Auth::user()->projects);
     }
 
 

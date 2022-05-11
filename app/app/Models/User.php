@@ -49,15 +49,15 @@ class User extends Authenticatable implements JWTSubject
     }
     public function getJWTCustomClaims()
     {
-        return ['roles' => 'MANAGER'];
+        return [];
     }
 
-    public function project()
+    public function projects()
     {
-        return $this->belongsToMany(Project::class, 'permissions')->using(Permissions::class);
+        return $this->belongsToMany(Project::class, 'users-projects');
     }
     public function activities()
-    {
+    {S
         return $this->belongsToMany(Activity::class, 'users-activities');
     }
     public function activityFromProject($project){
