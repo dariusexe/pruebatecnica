@@ -70,7 +70,7 @@ class IncidentTest extends TestCase
 
         $response = $this->deleteJson('api/projects/' . $project->id . '/activities/' . $activity->id . '/incidents/' . $incident->id);
         $response->assertStatus(403);
-        $activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => 1]);
+        $activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => UserRole::MANAGER]);
         $response = $this->deleteJson('api/projects/' . $project->id . '/activities/' . $activity->id . '/incidents/' . $incident->id);
         $response->assertStatus(200);
 

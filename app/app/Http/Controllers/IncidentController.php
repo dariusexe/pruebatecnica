@@ -70,7 +70,7 @@ class IncidentController extends Controller
      */
     public function destroy(Project $project, Activity $activity, Incident $incident)
     {
-        var_dump($project->users()->first()->pivot->user_id);
+
         $this->authorize('delete_incident', $activity);
         $incident->delete();
         return $incident;
