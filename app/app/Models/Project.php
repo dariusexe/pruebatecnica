@@ -22,7 +22,7 @@ class Project extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'permissions')->using(Permissions::class);
+        return $this->belongsToMany(User::class, 'users-projects');
     }
 
     public function isParticipant($user)
