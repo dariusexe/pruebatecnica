@@ -17,7 +17,8 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\ProjectCollection
+     * @param  Request  $request
+     * @return ProjectCollection
      */
     public function index(Request $request)
     {
@@ -29,8 +30,8 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return ProjectResource
      */
     public function store(Request $request)
     {
@@ -42,21 +43,21 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Project  $project
+     * @return ProjectResource
      */
     public function show(Project $project)
     {
         $this->authorize('show', $project);
-       return new ProjectResource($project);
+        return new ProjectResource($project);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @return ProjectResource
      */
     public function update(Request $request, Project $project)
     {
@@ -69,8 +70,8 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Project  $project
+     * @return ProjectResource
      */
     public function destroy(Project $project)
     {
@@ -83,9 +84,9 @@ class ProjectController extends Controller
     /**
      * Add especific user to a Project.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @return Response
      */
     public function addParticipant(Request $request, Project $project)
     {
@@ -94,7 +95,7 @@ class ProjectController extends Controller
         $role = $request->role_id;
         $user = User::findOrFail($request->user_id);
         try {
-            if($project->isParticipantWithRole($user, $role)){
+            if ($project->isParticipantWithRole($user, $role)) {
                 return response()->json(['error' => 'User already exists in project with this role'], 400);
             }
             $project->users()->attach($user, ['role_id' => $role]);
@@ -107,9 +108,9 @@ class ProjectController extends Controller
     /**
      * Remove especific user from Project.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @return Response
      */
     public function removeParticipant(Request $request, Project $project, User $user)
 
@@ -127,9 +128,9 @@ class ProjectController extends Controller
     /**
      * Display all Participan users in a Project.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @return Response
      */
     public function getParticipants(Project $project)
     {
@@ -140,14 +141,13 @@ class ProjectController extends Controller
     /**
      * Display all Manager users in a Project.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @return UserCollection
      */
     public function getManagers(Project $project)
     {
         $managers = $project->users()->where('role_id', UserRole::MANAGER)->get();
         return new UserCollection($managers);
-
     }
 }

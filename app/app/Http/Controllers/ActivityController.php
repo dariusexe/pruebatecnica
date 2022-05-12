@@ -20,7 +20,7 @@ class ActivityController extends Controller
      *
      * @param Request $request
      * @param Project $project
-     * @return \App\Http\Resources\ActivityCollection
+     * @return ActivityCollection
      */
     public function index(Request $request, Project $project)
     {
@@ -30,9 +30,9 @@ class ActivityController extends Controller
     /**
      * Store a newly created Activity attached to a user with role Manager.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project       $project
-     * @return \App\Http\Resources\ActivityResource
+     * @param  Request  $request
+     * @param  Project  $project
+     * @return ActivityResource
      */
     public function store(Request $request, Project $project)
     {
@@ -46,8 +46,8 @@ class ActivityController extends Controller
     /**
      * Display the specified Activity.
      *
-     * @param  \App\Models\Activity  $activity
-     * @return \App\Http\Resources\ActivityResource
+     * @param  Activity  $activity
+     * @return ActivityResource
      */
     public function show(Project $project, Activity $activity)
     {
@@ -58,9 +58,9 @@ class ActivityController extends Controller
     /**
      * Update the specified Activity in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Activity  $activity
-     * @return \App\Http\Resources\ActivityResource
+     * @param  Request  $request
+     * @param  Activity  $activity
+     * @return ActivityResource
      */
     public function update(Request $request, Activity $activity)
     {
@@ -72,8 +72,8 @@ class ActivityController extends Controller
     /**
      * Remove the specified Activity from storage.
      *
-     * @param  \App\Models\Activity  $activity
-     * @return \App\Http\Resources\ActivityResource
+     * @param  Activity  $activity
+     * @return ActivityResource
      */
     public function destroy(Activity $activity)
     {
@@ -81,17 +81,26 @@ class ActivityController extends Controller
         return new ActivityResource($activity);
     }
 
+    /**
+     * Display all users from activity
+     * @param Request $request
+     * @param Project $project
+     * @param Activity $activity
+     * @return UserCollection
+     */
+
     public function getParticipants(Request $request, Project $project, Activity $activity)
     {
         $this->authorize('show', $activity);
         return new UserCollection($activity->users);
     }
+
     /**
-     * Undocumented function
-     *
+     * Add especific user to an Activity.
      * @param Request $request
+     * @param Project $project
      * @param Activity $activity
-     * @return \Illuminate\Http\Response
+     * @return UserResource
      */
     public function addParticipant(Request $request, Project $project, Activity $activity)
     {
@@ -103,6 +112,13 @@ class ActivityController extends Controller
         return response()->json(['success' => 'User added to a Activity'], 201);
     }
 
+    /**
+     * Remove especific user to an Activity.
+     * @param Request $request
+     * @param Project $project
+     * @param Activity $activity
+     * @return UserResource
+     */
     public function removeParticipant(Request $request, Project $project, Activity $activity, User $user)
     {
         if (!$activity->isParticipant($user)) {
@@ -112,6 +128,12 @@ class ActivityController extends Controller
         return response()->json(['success' => 'User removed from a Activity'], 200);
     }
 
+    /**
+     * Display all activities from user
+     * @param Request $request
+     * @param Project $project
+     * @return JsonResponse
+     */
     public function changeParticipantRole(Request $request, Project $project, Activity $activity, User $user){
         if (!$activity->isParticipant($user)) {
             return response()->json(['error' => 'User not found in Activity'], 400);

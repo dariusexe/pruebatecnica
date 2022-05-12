@@ -4,7 +4,7 @@ Para la configuración y pueta en marcha del software tan solo hay que ejecutar 
 
 He optado por crear una API CRUD con diferentes endpoint para su uso.
 
-Debajo dejo la lista de endpoints disponibles para interactura.
+ejecutando el comando php artisan route:list se puede ver todos los endpoint que contien la actividad
  
   
  
