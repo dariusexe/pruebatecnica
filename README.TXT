@@ -55,6 +55,8 @@ Comentarios
 
 La experiencia que tengo con Laravel se remonta a la versión 5, pero leyendo las nuevas versiones he podido utilizar nuevas herramientas que han hecho que puedo relizar tareas mas fácilmente.
 
+Para la autenticación he utilizado el macanismo de seguridad JWT ya que me siento cómodo utilizandolo.
+
 Siguiendo la lógica, los creadores de una actividad o proyecto son por defecto administradores del recurso que crean.
 
 Dentro de las policies hay mucho codigo repetido, con vista a futuro si queremos cambiar una politica sobre un recurso es mas rápido cambiar la funcion asociada.

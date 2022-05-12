@@ -131,20 +131,9 @@ class ProjectController extends Controller
      */
     public function getParticipants(Project $project)
     {
-        $participants = $project->users()->where('role_id', UserRole::PARTICIPANT)->get();
+        $participants = $project->users;
         return new UserCollection($participants);
     }
 
-    /**
-     * Display all Manager users in a Project.
-     *
-     * @param  Request  $request
-     * @param  Project  $project
-     * @return UserCollection
-     */
-    public function getManagers(Project $project)
-    {
-        $managers = $project->users()->where('role_id', UserRole::MANAGER)->get();
-        return new UserCollection($managers);
-    }
+
 }

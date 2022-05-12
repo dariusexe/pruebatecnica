@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('users-incidents', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('incident_id')->constrained()->onDelete('cascade');
+            $table->unique(['user_id', 'incident_id']);
         });
     }
 

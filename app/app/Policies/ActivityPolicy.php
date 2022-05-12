@@ -60,4 +60,8 @@ class ActivityPolicy
     {
         return $activity->isParticipantWithRole($user, UserRole::MANAGER);
     }
+    public function change_participant(User $user, Activity $activity)
+    {
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+    }
 }

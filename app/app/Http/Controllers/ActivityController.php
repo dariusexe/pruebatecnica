@@ -104,6 +104,7 @@ class ActivityController extends Controller
      */
     public function addParticipant(Request $request, Project $project, Activity $activity)
     {
+        $this->authorize('add_participant', $activity);
         $user = User::findOrFail($request->user_id);
         if ($activity->isParticipant($user)) {
             return response()->json(['error' => 'User already has been added'], 400);
@@ -121,6 +122,7 @@ class ActivityController extends Controller
      */
     public function removeParticipant(Request $request, Project $project, Activity $activity, User $user)
     {
+        $this->authorize('remove_participant', $activity);
         if (!$activity->isParticipant($user)) {
             return response()->json(['error' => 'User not found in Activity'], 400);
         }
@@ -135,6 +137,7 @@ class ActivityController extends Controller
      * @return JsonResponse
      */
     public function changeParticipantRole(Request $request, Project $project, Activity $activity, User $user){
+        $this->authorize('change_participant', $activity);
         if (!$activity->isParticipant($user)) {
             return response()->json(['error' => 'User not found in Activity'], 400);
         }
