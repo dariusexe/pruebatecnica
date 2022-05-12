@@ -1,6 +1,7 @@
 Configuración y uso
 
-Para la configuración y pueta en marcha del software tan solo hay que ejecutar un docker-composer up -d en el directorio del archivo docker-compose.yml
+Para la configuración y pueta en marcha del software, primero hay que crear la carpeta vendor de laravel. Para ello hay usar el comando composer install en la carpeta app.
+Luego tan solo hay que ejecutar un docker-composer up -d en el directorio del archivo docker-compose.yml en el directorio raiz.
 
 He optado por crear una API CRUD con diferentes endpoint para su uso.
 
