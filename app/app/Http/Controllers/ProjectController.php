@@ -11,6 +11,7 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -35,6 +36,13 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2550',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
+
         $project = Project::create($request->all());
         $project->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
         return new ProjectResource($project);
@@ -62,6 +70,12 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $this->authorize('update', $project);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2550',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
         $project->update($request->all());
         return new ProjectResource($project);
     }
@@ -88,7 +102,15 @@ class ProjectController extends Controller
      */
     public function addParticipant(Request $request, Project $project)
     {
+
+
         $this->authorize('edit_participant', $project);
+
+        $validator = Validator::make($request->all(), [
+            'role_id' => 'required|integer|min:1|max:2',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
 
         $role = $request->role_id;
         $user = User::findOrFail($request->user_id);
@@ -134,6 +156,4 @@ class ProjectController extends Controller
         $participants = $project->users;
         return new UserCollection($participants);
     }
-
-
 }

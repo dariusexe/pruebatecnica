@@ -12,6 +12,7 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
 {
@@ -37,6 +38,13 @@ class ActivityController extends Controller
     public function store(Request $request, Project $project)
     {
         $this->authorize('create_activity', $project);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2550',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
+
         $activity = $project->activities()->create($request->all());
         $activity->users()->attach(Auth::user()->id, ['role_id' => UserRole::MANAGER]);
 
@@ -65,6 +73,12 @@ class ActivityController extends Controller
     public function update(Request $request, Activity $activity)
     {
         $this->authorize('update', $activity);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2550',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
         $activity->update($request->all());
         return new ActivityResource($activity);
     }

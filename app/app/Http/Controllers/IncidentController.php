@@ -12,6 +12,7 @@ use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class IncidentController extends Controller
 {
@@ -38,6 +39,13 @@ class IncidentController extends Controller
      */
     public function store(Request $request, Project $project, Activity $activity)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2550',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
+
         $this->authorize('create_incident', $activity);
         $incident = $activity->incidents()->create($request->all());
         return new IncidentResource($incident);
@@ -68,6 +76,12 @@ class IncidentController extends Controller
     public function update(Request $request, Project $project, Activity $activity,  Incident $incident)
     {
         $this->authorize('update_incident', $activity);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2550',
+        ], [
+            'required' => 'The :attribute field is required.'
+        ]);
         $incident->update($request->all());
         return new IncidentResource($incident);
     }
