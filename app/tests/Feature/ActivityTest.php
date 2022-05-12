@@ -94,4 +94,13 @@ class ActivityTest extends TestCase
         $response->assertStatus(201);
 
     }
+    public function test_show_correct_incidents_from_activity_with_correct_permissions(){
+        $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id);
+        $response->assertStatus(200)
+            ->assertJsonPath('data.incidents.0.id', $this->incident->id);
+        $this->activity->users()->updateExistingPivot($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]);
+        $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id);
+        $response->assertStatus(200)
+            ->assertJsonPath('data.incidents.0.id', null);
+    }
 }

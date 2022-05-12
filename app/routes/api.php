@@ -21,8 +21,6 @@ use App\Http\Controllers\IncidentController;
 //User routes
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate'])->name('login');
-Route::get('users/delete/{id}', [UserController::class, 'delete']);
-
 Route::get('users', [UserController::class, 'show'])->middleware('auth');
 Route::get('users/{user}/projects', [UserController::class, 'showProjects'])->middleware('auth');
 Route::get('users/{user}/activities', [UserController::class, 'showActivities'])->middleware('auth');
@@ -54,5 +52,11 @@ Route::controller(ActivityController::class)->middleware('auth')->group(function
 
 
 //Incident routes
-
 Route::resource('projects/{project}/activities/{activity}/incidents', IncidentController::class)->middleware('auth')->scoped();
+Route::controller(IncidentController::class)->middleware('auth')->group(function (){
+
+    Route::post('projects/{project}/activities/{activity}/incidents/{incident}/users', 'addParticipant');
+    Route::get('projects/{project}/activities/{activity}/incidents/{incident}/users', 'getParticipants');
+    Route::delete('projects/{project}/activities/{activity}/incidents/{incident}/users/{user}', 'removeParticipant');
+
+});

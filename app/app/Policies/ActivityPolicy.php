@@ -47,5 +47,14 @@ class ActivityPolicy
         return $activity->isParticipantWithRole($user, UserRole::MANAGER);
 
     }
+    public function show_participants(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+    }
+    public function add_participant(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+    }
+    public function remove_participant(User $user, Activity $activity){
+        return $activity->isParticipantWithRole($user, UserRole::MANAGER);
+    }
 
 }

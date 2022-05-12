@@ -148,6 +148,14 @@ class ProjectTest extends TestCase
         $response = $this->postJson('api/projects/' . $project->id . '/users', $data,  $this->headers);
         $response->assertStatus(201);
     }
-
-    
+    public function test_show_correct_incident_from_project_with_correct_permissions()
+    {
+        $response = $this->get('api/projects/' . $this->project->id);
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.activities.0.incidents.0.id',$this->incident->id);
+        $this->activity->users()->updateExistingPivot($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]);
+        $response = $this->get('api/projects/' . $this->project->id);
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.activities.0.incidents.0.id',null);
+    }
 }

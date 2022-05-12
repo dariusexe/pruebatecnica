@@ -20,6 +20,7 @@ class ActivityResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'incidents' => $this->when($this->isParticipantWithRole($request->user(), UserRole::MANAGER),IncidentResource::collection($this->incidents)),
             'participants' => UserResource::collection($this->users()->where('role_id', UserRole::PARTICIPANT)->get()),
             'managers' => UserResource::collection($this->users()->where('role_id', UserRole::MANAGER)->get()),
             'created_at' => $this->created_at,

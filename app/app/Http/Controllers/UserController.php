@@ -15,7 +15,11 @@ use App\Http\Resources\UserCollection;
 class UserController extends Controller
 {
 
-
+    /**
+     * Login users and create a token
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * */
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -39,6 +43,12 @@ class UserController extends Controller
         return response()->json(compact('token'));
     }
 
+    /**
+     * Register a new user
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * */
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -61,7 +71,11 @@ class UserController extends Controller
         return response()->json(compact('user'), 201);
     }
 
-
+    /**
+     * Delete a user
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete($id)
     {
         $user = User::find($id);
@@ -69,18 +83,45 @@ class UserController extends Controller
         return response()->json(compact('user'));
     }
 
+    /**
+     * Get all users
+     * @param Request $request
+     * @return \App\Http\Resources\UserCollection
+     */
+
     public function show()
     {
         return new UserCollection(User::all());
     }
 
-    public function showProjects(User $user){
+    /**
+     * Get all projects from a user
+     * @param User $user
+     * @return \App\Http\Resources\ProjectCollection
+     */
+    public function showProjects(User $user)
+    {
         return new ProjectCollection($user->projects);
     }
-    public function showActivities(User $user){
+
+    /**
+     * Get all activities from a user
+     * @param User $user
+     * @return \App\Http\Resources\ActivityCollection
+     * */
+
+    public function showActivities(User $user)
+    {
         return new ActivityCollection($user->activities);
     }
-    public function showIncidents(User $user){
+
+    /**
+     * Get all incidents from a user
+     * @param User $user
+     * @return \App\Http\Resources\IncidentCollection
+     * */
+    public function showIncidents(User $user)
+    {
         return new IncidentCollection($user->incidents);
     }
 }

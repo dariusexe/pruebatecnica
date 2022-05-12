@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Enum\UserRole;
 use App\Http\Resources\IncidentCollection;
 use App\Http\Resources\IncidentResource;
+use App\Http\Resources\UserCollection;
 use App\Models\Incident;
 use App\Models\Project;
 use App\Models\Activity;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +18,9 @@ class IncidentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  Project  $project
+     * @param  Request  $request
+     * @return IncidentCollection
      */
     public function index(Project $project, Activity $activity)
     {
@@ -27,8 +31,10 @@ class IncidentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @param  Request  $request
+     * @return IncidentResource
      */
     public function store(Request $request, Project $project, Activity $activity)
     {
@@ -40,10 +46,11 @@ class IncidentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Incident  $incident
-     * @return \Illuminate\Http\Response
+     * @param  Project  $project
+     * @param  Request  $request
+     * @return IncidentResource
      */
-    public function show(Request $request, Project $project, Activity $activity, Incident $incident)
+    public function show(Project $project, Activity $activity, Incident $incident)
     {
 
         $this->authorize('show_incident', $activity);
@@ -53,9 +60,10 @@ class IncidentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Incident  $incident
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Project  $project
+     * @param  Request  $request
+     * @return IncidentResource
      */
     public function update(Request $request, Project $project, Activity $activity,  Incident $incident)
     {
@@ -67,8 +75,9 @@ class IncidentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Incident  $incident
-     * @return \Illuminate\Http\Response
+     * @param  Project  $project
+     * @param  Request  $request
+     * @return IncidentResource
      */
     public function destroy(Project $project, Activity $activity, Incident $incident)
     {
@@ -78,17 +87,56 @@ class IncidentController extends Controller
         return new IncidentResource($incident);
     }
 
+    /**
+     * Add especific user to a Incident
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Activity $activity
+     * @param Incident $incident
+     * @return Response
+     */
+
+
     public function addParticipant(Request $request, Project $project, Activity $activity, Incident $incident)
     {
 
         $this->authorize('add_participant', $activity);
-        $incident->users()->attach($request->user_id);
-        return new IncidentResource($incident);
+        $user = User::findOrFail($request->user_id);
+        $incident->users()->attach($user->id);
+        return response()->json(['success' => 'User added to a Activity'], 201);
     }
-    public function removeParticipant(Request $request, Project $project, Activity $activity, Incident $incident)
+
+
+    /**
+     * Remove a Participant from a Incident
+
+     * @param Request $request
+     * @param Project $project
+     * @param Activity $activity
+     * @param Incident $incident
+     * @param User $user
+     * @return Response
+     */
+    public function removeParticipant(Request $request, Project $project, Activity $activity, Incident $incident, User $user)
     {
         $this->authorize('remove_participant', $activity);
-        $incident->users()->detach($request->user_id);
-        return new IncidentResource($incident);
+        $incident->users()->detach($user->id);
+        return response()->json(['success' => 'User removed to a Activity'], 200);
+    }
+
+    /**
+     * Return all participants in a Incident
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Activity $activity
+     * @param Incident $incident
+     * @return UserCollection
+     */
+    public function getParticipants(Request $request, Project $project, Activity $activity, Incident $incident)
+    {
+        $this->authorize('show_participants', $activity);
+        return new UserCollection($incident->users);
     }
 }
