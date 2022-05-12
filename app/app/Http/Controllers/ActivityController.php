@@ -31,7 +31,7 @@ class ActivityController extends Controller
      * Store a newly created Activity attached to a user with role Manager.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  S     $project
+     * @param  \App\Models\Project       $project
      * @return \App\Http\Resources\ActivityResource
      */
     public function store(Request $request, Project $project)
