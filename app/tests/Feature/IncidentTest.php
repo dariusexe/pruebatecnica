@@ -81,4 +81,11 @@ class IncidentTest extends TestCase
         $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id . '/incidents/' . $this->incident->id . '1');
         $response->assertStatus(404);
     }
+
+    public function test_show_correct_incidents(){
+        $project = Project::factory()->hasAttached($this->loggedInUser, ['role_id' => UserRole::MANAGER])->has(Activity::factory()->has(Incident::factory())->hasAttached($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]))->create();
+        $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id . '/incidents');
+        $response->assertStatus(200)->assertJsonMissing(['id' => $project->activities()->first()->incidents()->first()->id]);
+        dd($response->json());
+    }
 }

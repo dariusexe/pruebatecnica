@@ -21,7 +21,7 @@ class IncidentController extends Controller
     public function index(Project $project, Activity $activity)
     {
         $this->authorize('show_incident', $activity);
-        return new IncidentCollection( $activity->incidentsWhereUserIsManagerInActivity(Auth::user()));
+        return new IncidentCollection( Auth::user()->incidentsWhereUserIsManagerInActivity($activity) );
     }
 
     /**
