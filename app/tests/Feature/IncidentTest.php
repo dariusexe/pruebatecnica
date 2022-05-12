@@ -45,15 +45,16 @@ class IncidentTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_only_manager_of_activity_can_show_incident(){
+    public function test_only_manager_of_activity_can_show_incident()
+    {
         $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id . '/incidents/' . $this->incident->id);
         $response->assertStatus(200)->assertJsonFragment($this->incident->toArray());
         $this->activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => UserRole::PARTICIPANT]);
         $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id . '/incidents/' . $this->incident->id);
         $response->assertStatus(403);
-
     }
-    public function test_only_manager_of_activity_can_update_incident(){
+    public function test_only_manager_of_activity_can_update_incident()
+    {
         $data = [
             'name' => 'test incident'
         ];
@@ -61,9 +62,11 @@ class IncidentTest extends TestCase
         $response->assertStatus(200)->assertJsonFragment($data);
         $this->activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => UserRole::PARTICIPANT]);
         $response = $this->putJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id . '/incidents/' . $this->incident->id, $data);
-        $response->assertStatus(403);}
+        $response->assertStatus(403);
+    }
 
-    public function test_only_manager_of_activity_can_delete_incident(){
+    public function test_only_manager_of_activity_can_delete_incident()
+    {
         $project = Project::factory()->hasAttached($this->loggedInUser, ['role_id' => UserRole::MANAGER])->has(Activity::factory()->has(Incident::factory())->hasAttached($this->loggedInUser, ['role_id' => UserRole::PARTICIPANT]))->create();
         $activity = $project->activities()->first();
         $incident = $activity->incidents()->first();
@@ -73,6 +76,9 @@ class IncidentTest extends TestCase
         $activity->users()->updateExistingPivot($this->loggedInUser->id, ['role_id' => UserRole::MANAGER]);
         $response = $this->deleteJson('api/projects/' . $project->id . '/activities/' . $activity->id . '/incidents/' . $incident->id);
         $response->assertStatus(200);
-
+    }
+    public function test_show_incorrect_incident(){
+        $response = $this->getJson('api/projects/' . $this->project->id . '/activities/' . $this->activity->id . '/incidents/' . $this->incident->id . '1');
+        $response->assertStatus(404);
     }
 }

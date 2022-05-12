@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\UserRole;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -60,8 +61,20 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Activity::class, 'users-activities')->withPivot('role_id');
     }
-    public function activityFromProject($project){
+    public function incidents()
+    {
+        return $this->belongsToMany(Incident::class, 'users-incidents');
+    }
+    public function activityFromProject($project)
+    {
         return $this->activities()->where('project_id', $project->id)->get();
     }
-
+    public function activitiesWhereUserIsManager()
+    {
+        return $this->activities()->wherePivot('role_id', UserRole::MANAGER);
+    }
+    public function incidentsWhereUserIsManagerInActivity($user)
+    {
+        return $this->activitiesWhereUserIsManager()->whereHas('incidents')->get()->pluck('incidents')->collapse();
+    }
 }

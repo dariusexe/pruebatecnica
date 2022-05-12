@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enum\UserRole;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class IncidentResource extends JsonResource
@@ -20,6 +21,8 @@ class IncidentResource extends JsonResource
             'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'participants' => UserResource::collection($this->users),
+            'activity_id' => $this->activity_id,
         ];
     }
 }

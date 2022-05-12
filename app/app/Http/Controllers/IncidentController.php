@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enum\UserRole;
+use App\Http\Resources\IncidentCollection;
+use App\Http\Resources\IncidentResource;
 use App\Models\Incident;
 use App\Models\Project;
 use App\Models\Activity;
@@ -19,7 +21,7 @@ class IncidentController extends Controller
     public function index(Project $project, Activity $activity)
     {
         $this->authorize('show_incident', $activity);
-        return $activity->incidents;
+        return new IncidentCollection( $activity->incidentsWhereUserIsManagerInActivity(Auth::user()));
     }
 
     /**
@@ -32,7 +34,7 @@ class IncidentController extends Controller
     {
         $this->authorize('create_incident', $activity);
         $incident = $activity->incidents()->create($request->all());
-        return $incident;
+        return new IncidentResource($incident);
     }
 
     /**
@@ -45,7 +47,7 @@ class IncidentController extends Controller
     {
 
         $this->authorize('show_incident', $activity);
-        return $incident;
+        return new IncidentResource($incident);
     }
 
     /**
@@ -59,7 +61,7 @@ class IncidentController extends Controller
     {
         $this->authorize('update_incident', $activity);
         $incident->update($request->all());
-        return $incident;
+        return new IncidentResource($incident);
     }
 
     /**
@@ -73,7 +75,7 @@ class IncidentController extends Controller
 
         $this->authorize('delete_incident', $activity);
         $incident->delete();
-        return $incident;
+        return new IncidentResource($incident);
     }
 
     public function addParticipant(Request $request, Project $project, Activity $activity, Incident $incident)
@@ -81,6 +83,12 @@ class IncidentController extends Controller
 
         $this->authorize('add_participant', $activity);
         $incident->users()->attach($request->user_id);
-        return $incident;
+        return new IncidentResource($incident);
+    }
+    public function removeParticipant(Request $request, Project $project, Activity $activity, Incident $incident)
+    {
+        $this->authorize('remove_participant', $activity);
+        $incident->users()->detach($request->user_id);
+        return new IncidentResource($incident);
     }
 }

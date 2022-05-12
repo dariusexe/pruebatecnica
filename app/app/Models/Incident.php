@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Incident extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'description',
@@ -16,6 +16,6 @@ class Incident extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'users-incidents');
     }
 }
