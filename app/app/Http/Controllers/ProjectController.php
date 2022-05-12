@@ -62,7 +62,6 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $this->authorize('update', $project);
-        $project = Project::findOrFail($project->id);
         $project->update($request->all());
         return new ProjectResource($project);
     }
@@ -76,7 +75,6 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $this->authorize('delete', $project);
-        $project = Project::findOrFail($project->id);
         $project->delete();
         return new ProjectResource($project);
     }
@@ -116,7 +114,6 @@ class ProjectController extends Controller
 
     {
         $this->authorize('edit_participant', $project);
-        $project = Project::findOrFail($project->id);
         try {
             $project->users()->detach($user);
         } catch (\Exception $e) {
