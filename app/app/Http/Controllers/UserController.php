@@ -76,9 +76,8 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function delete($id)
+    public function delete(User $user)
     {
-        $user = User::find($id);
         $user->delete();
         return response()->json(compact('user'));
     }
